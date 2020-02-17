@@ -64,8 +64,8 @@ public class HSPColor {
 
     public static float[] RGBtoHSP(int red, int green, int blue, float[] hsp) {
         float r = ((float) red) / 255.0f;
-        float g = ((float) red) / 255.0f;
-        float b = ((float) red) / 255.0f;
+        float g = ((float) green) / 255.0f;
+        float b = ((float) blue) / 255.0f;
         hsp = hsp == null ? new float[3] : hsp;
         float h = 0;
         float s = 0;
@@ -75,20 +75,18 @@ public class HSPColor {
         if(high != 0) {
             s = (high - low) / high;
         }
-        if(high == low) {
-            h = 0;
-        } else {
-            float mhigh = Math.max(Math.max(1 - red / high, 1 - green / high), 1 - blue / high);
-            float hred = 1 - (1 - red / high) / mhigh;
-            float hgreen = 1 - (1 - green / high) / mhigh;
-            float hblue = 1 - (1 - blue / high) / mhigh;
-            float hhigh = Math.max(Math.max(hred, hgreen), hblue);
-            if(hgreen == hhigh) {
-                h = (2 + (hblue - hred)) / 6;
-            } else if(hblue == hhigh) {
-                h = (4 + (hred - hgreen)) / 6;
-            } else if(hred == hhigh) {
-                h = (6 + (hgreen - hblue)) / 6;
+        if(high != low) {
+            float hm = Math.max(Math.max(1 - r / high, 1 - g / high), 1 - b / high);
+            float hr = 1 - (1 - r / high) / hm;
+            float hg = 1 - (1 - g / high) / hm;
+            float hb = 1 - (1 - b / high) / hm;
+            float hh = Math.max(Math.max(hr, hg), hb);
+            if(hg == hh) {
+                h = (2 + (hb - hr)) / 6;
+            } else if(hb == hh) {
+                h = (4 + (hr - hg)) / 6;
+            } else if(hr == hh) {
+                h = (6 + (hg - hb)) / 6;
             }
             h %= 1;
         }
