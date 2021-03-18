@@ -1,6 +1,10 @@
 public class HSPColor {
 
-    public static int HSPtoRGB(float hue, float saturation, float percievedLuminance) {
+    public static int[] HSPtoRGB(float[] hsp) {
+        return HSPtoRGB(hsp[0], hsp[1], hsp[2]);
+    }
+
+    public static int[] HSPtoRGB(float hue, float saturation, float percievedLuminance) {
         float r = 0;
         float g = 0;
         float b = 0;
@@ -8,40 +12,41 @@ public class HSPColor {
         float s = saturation;
         float p = percievedLuminance;
         switch((int) h) {
-            case 0:
+            case 0 -> {
                 r = 1;
                 g = (h - 0);
                 b = 0;
-                break;
-            case 1:
+            }
+            case 1 -> {
                 r = 1 - (h - 1);
                 g = 1;
                 b = 0;
-                break;
-            case 2:
+            }
+            case 2 -> {
                 r = 0;
                 g = 1;
                 b = (h - 2);
-                break;
-            case 3:
+            }
+            case 3 -> {
                 r = 0;
                 g = 1 - (h - 3);
                 b = 1;
-                break;
-            case 4:
+            }
+            case 4 -> {
                 r = (h - 4);
                 g = 0;
                 b = 1;
-                break;
-            case 5:
+            }
+            case 5 -> {
                 r = 1;
                 g = 0;
                 b = 1 - (h - 5);
-                break;
-            default:
+            }
+            default -> {
                 r = 0;
                 g = 0;
                 b = 0;
+            }
         }
         r = (1 - s + s * r);
         g = (1 - s + s * g);
@@ -59,14 +64,18 @@ public class HSPColor {
             int pBits = (int) (percievedLuminance * 255.0d + 0.5d);
             rgb = aBits << 24 | pBits << 16 | pBits << 8 | pBits;
         }
-        return rgb;
+        return new int[] {rBits, gBits, bBits};
     }
 
-    public static float[] RGBtoHSP(int red, int green, int blue, float[] hsp) {
+    public static float[] RGBtoHSP(int[] rgb) {
+        return RGBtoHSP(rgb[0], rgb[1], rgb[2]);
+    }
+
+    public static float[] RGBtoHSP(int red, int green, int blue) {
         float r = ((float) red) / 255.0f;
         float g = ((float) green) / 255.0f;
         float b = ((float) blue) / 255.0f;
-        hsp = hsp == null ? new float[3] : hsp;
+        float[] hsp = new float[3];
         float h = 0;
         float s = 0;
         float p = (float) Math.sqrt(0.3f * r * r + 0.6f * g * g + 0.1f * b * b);
