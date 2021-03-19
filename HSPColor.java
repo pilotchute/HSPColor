@@ -55,16 +55,14 @@ public class HSPColor {
         r *= q;
         g *= q;
         b *= q;
-        int aBits = 0xff;
-        int rBits = (int) (r * 255.0f + 0.5f);
-        int gBits = (int) (g * 255.0f + 0.5f);
-        int bBits = (int) (b * 255.0f + 0.5f);
-        int rgb = aBits << 24 | rBits << 16 | gBits << 8 | bBits;
-        if(rBits > 255 || gBits > 255 || bBits > 255) {
-            int pBits = (int) (percievedLuminance * 255.0d + 0.5d);
-            rgb = aBits << 24 | pBits << 16 | pBits << 8 | pBits;
-        }
-        return new int[] {rBits, gBits, bBits};
+        int aInt = 0xff;
+        int rInt = (int) (r * 255.0f + 0.5f);
+        int gInt = (int) (g * 255.0f + 0.5f);
+        int bInt = (int) (b * 255.0f + 0.5f);
+        rInt = rInt > 255 ? 255 : rInt;
+        gInt = gInt > 255 ? 255 : gInt;
+        bInt = bInt > 255 ? 255 : bInt;
+        return new int[] {rInt, gInt, bInt};
     }
 
     public static float[] RGBtoHSP(int[] rgb) {
@@ -103,5 +101,14 @@ public class HSPColor {
         hsp[1] = s;
         hsp[2] = p;
         return hsp;
+    }
+
+    public static int RGBtoInt(int rInt, int gInt, int bInt) {
+        int aInt = 0xff;
+        rInt = rInt > 255 ? 255 : rInt;
+        gInt = gInt > 255 ? 255 : gInt;
+        bInt = bInt > 255 ? 255 : bInt;
+        int rgbInt = aInt << 24 | rInt << 16 | gInt << 8 | bInt;
+        return rgbInt;
     }
 }
