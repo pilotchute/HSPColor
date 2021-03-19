@@ -8,7 +8,7 @@ public class HSPColor {
         float r = 0;
         float g = 0;
         float b = 0;
-        float h = hue * 6.0f;
+        float h = hue % 1 * 6.0f;
         float s = saturation;
         float p = percievedLuminance;
         switch((int) h) {
@@ -52,6 +52,27 @@ public class HSPColor {
         g = (1 - s + s * g);
         b = (1 - s + s * b);
         float q = (float) Math.sqrt((p * p) / (0.3f * r * r + 0.6f * g * g + 0.1f * b * b));
+        if(q > 1.0) {
+            r = (r + s - 1) / s;
+            g = (g + s - 1) / s;
+            b = (b + s - 1) / s;
+            s = (float) (-(0.5 * Math.sqrt(40 * (p * p - 1)
+                                           * (b * b - 2 * b
+                                              + 6 * g * g - 12 * g
+                                              + 3 * r * r - 6 * r
+                                              + 10)
+                                           + 4 * (b + 6 * g + 3 * r - 10)
+                                             * (b + 6 * g + 3 * r - 10))
+                           + b + 6 * g + 3 * r - 10)
+                         / (b * b - 2 * b
+                            + 6 * g * g - 12 * g
+                            + 3 * r * r - 6 * r
+                            + 10)); //*/ From Wolfram alpha
+            r = (1 - s + s * r);
+            g = (1 - s + s * g);
+            b = (1 - s + s * b);
+            q = (float) Math.sqrt((p * p) / (0.3f * r * r + 0.6f * g * g + 0.1f * b * b));
+        }
         r *= q;
         g *= q;
         b *= q;
@@ -59,9 +80,6 @@ public class HSPColor {
         int rInt = (int) (r * 255.0f + 0.5f);
         int gInt = (int) (g * 255.0f + 0.5f);
         int bInt = (int) (b * 255.0f + 0.5f);
-        rInt = rInt > 255 ? 255 : rInt;
-        gInt = gInt > 255 ? 255 : gInt;
-        bInt = bInt > 255 ? 255 : bInt;
         return new int[] {rInt, gInt, bInt};
     }
 
