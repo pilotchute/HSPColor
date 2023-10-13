@@ -1,4 +1,19 @@
 public class HSPColor {
+    private final String name;
+    private final float[] hsp;
+    private final int[] rgb;
+
+    public HSPColor(String name, int[] rgb) {
+        this.name = name;
+        this.hsp = RGBtoHSP(rgb);
+        this.rgb = rgb;
+    }
+
+    public HSPColor(String name, float[] hsp) {
+        this.name = name;
+        this.hsp = hsp;
+        this.rgb = HSPtoRGB(hsp);
+    }
 
     public static int[] HSPtoRGB(float[] hsp) {
         return HSPtoRGB(hsp[0], hsp[1], hsp[2]);
@@ -11,7 +26,7 @@ public class HSPColor {
         float h = hue % 1 * 6.0f;
         float s = saturation;
         float p = percievedLuminance;
-        switch((int) h) {
+        switch ((int) h) {
             case 0 -> {
                 r = 1;
                 g = (h - 0);
@@ -52,27 +67,29 @@ public class HSPColor {
         g = (1 - s + s * g);
         b = (1 - s + s * b);
         float q = (float) Math.sqrt((p * p) / (0.3f * r * r + 0.6f * g * g + 0.1f * b * b));
-        if(q > 1.0) {
+        /*/ this desaturates to hit percieved luminance reqest, and has been deactivated due to opacity to the user.
+        if (q > 1.0) {
             r = (r + s - 1) / s;
             g = (g + s - 1) / s;
             b = (b + s - 1) / s;
             s = (float) (-(0.5 * Math.sqrt(40 * (p * p - 1)
-                                           * (b * b - 2 * b
-                                              + 6 * g * g - 12 * g
-                                              + 3 * r * r - 6 * r
-                                              + 10)
-                                           + 4 * (b + 6 * g + 3 * r - 10)
-                                             * (b + 6 * g + 3 * r - 10))
-                           + b + 6 * g + 3 * r - 10)
-                         / (b * b - 2 * b
-                            + 6 * g * g - 12 * g
-                            + 3 * r * r - 6 * r
-                            + 10)); //*/ From Wolfram alpha
+                    * (b * b - 2 * b
+                    + 6 * g * g - 12 * g
+                    + 3 * r * r - 6 * r
+                    + 10)
+                    + 4 * (b + 6 * g + 3 * r - 10)
+                    * (b + 6 * g + 3 * r - 10))
+                    + b + 6 * g + 3 * r - 10)
+                    / (b * b - 2 * b
+                    + 6 * g * g - 12 * g
+                    + 3 * r * r - 6 * r
+                    + 10)); // From Wolfram alpha
             r = (1 - s + s * r);
             g = (1 - s + s * g);
             b = (1 - s + s * b);
             q = (float) Math.sqrt((p * p) / (0.3f * r * r + 0.6f * g * g + 0.1f * b * b));
         }
+        //*/
         r *= q;
         g *= q;
         b *= q;
@@ -80,7 +97,7 @@ public class HSPColor {
         int rInt = (int) (r * 255.0f + 0.5f);
         int gInt = (int) (g * 255.0f + 0.5f);
         int bInt = (int) (b * 255.0f + 0.5f);
-        return new int[] {rInt, gInt, bInt};
+        return new int[]{rInt, gInt, bInt};
     }
 
     public static float[] RGBtoHSP(int[] rgb) {
@@ -97,20 +114,20 @@ public class HSPColor {
         float p = (float) Math.sqrt(0.3f * r * r + 0.6f * g * g + 0.1f * b * b);
         float high = Math.max(Math.max(r, g), b);
         float low = Math.min(Math.min(r, g), b);
-        if(high != 0) {
+        if (high != 0) {
             s = (high - low) / high;
         }
-        if(high != low) {
+        if (high != low) {
             float hm = Math.max(Math.max(1 - r / high, 1 - g / high), 1 - b / high);
             float hr = 1 - (1 - r / high) / hm;
             float hg = 1 - (1 - g / high) / hm;
             float hb = 1 - (1 - b / high) / hm;
             float hh = Math.max(Math.max(hr, hg), hb);
-            if(hg == hh) {
+            if (hg == hh) {
                 h = (2 + (hb - hr)) / 6;
-            } else if(hb == hh) {
+            } else if (hb == hh) {
                 h = (4 + (hr - hg)) / 6;
-            } else if(hr == hh) {
+            } else if (hr == hh) {
                 h = (6 + (hg - hb)) / 6;
             }
             h %= 1;
@@ -128,5 +145,24 @@ public class HSPColor {
         bInt = bInt > 255 ? 255 : bInt;
         int rgbInt = aInt << 24 | rInt << 16 | gInt << 8 | bInt;
         return rgbInt;
+    }
+
+    public String info() {
+        return name
+                + " hsp: " + this.hsp[0] + " " + this.hsp[1] + " " + this.hsp[2]
+                + " rgb: " + this.rgb[0] + " " + this.rgb[1] + " " + this.rgb[2]
+                + " 0x" + String.format("%02X", rgb[0]) + String.format("%02x", rgb[1]) + String.format("%02x", rgb[2]);
+    }
+
+    public void print() {
+        System.out.println(info());
+    }
+
+    public int[] rgb() {
+        return this.rgb;
+    }
+
+    public float[] hsp() {
+        return this.hsp;
     }
 }
